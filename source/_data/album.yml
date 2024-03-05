@@ -1,0 +1,26 @@
+- class_name: 饭桶的欢乐时光
+  path_name: /foodPhoto
+  type: 2
+  description: 因为有你，今后的每一餐都会额外的期待🍕。
+  cover: https://resources.qibao.icu/img/food/img_0215.webp
+  rowHeight: 220
+  limit: 10
+  lazyload: true
+  btnLazyload: false
+  url: false
+  album_list:
+    - image:
+        - https://resources.qibao.icu/img/food/img_0197.webp
+- class_name: 旅途中的风景
+  path_name: /travelPhoto
+  type: 2
+  description: 你永远是旅途中最美的风景🌴。
+  cover: https://resources.qibao.icu/img/travel/1690881635632.webp
+  rowHeight: 220
+  limit: 10
+  lazyload: true
+  btnLazyload: false
+  url: false
+  album_list:
+    - image:
+        - https://resources.qibao.icu/img/travel/1690881635632.webp

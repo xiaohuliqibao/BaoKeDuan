@@ -1,0 +1,21 @@
+doctype html
+html(lang='en')
+  block head
+    title Index
+    script(src='/javascripts/jquery.min.js')
+    script(src='/javascripts/popper.min.js')
+    script(src='/javascripts/bootstrap.bundle.min.js')
+    link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
+    meta(charset='UTF-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    link(rel='stylesheet', href='/stylesheets/index.css')
+    script(src='/javascripts/index.js')
+
+body 
+  nav.navber.navbar-expand-lg.bg-body-tertiary
+    div.container-fluid
+      span.navbar-brand(href='#') Don't Starve
+      div.collapse.navbar-collapse#navbarSupportedContent
+        ul.navbar-nav.me-auto.mb-2.mb-lg-0
+          li.nav-item
+            a.nav-link(href='#') Home
