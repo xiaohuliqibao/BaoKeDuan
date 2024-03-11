@@ -5,6 +5,8 @@ const { exec } = require('child_process');
 var router = express.Router();
 var jwt = require('jsonwebtoken');
 const { secretKey } = require('../config/defultconfig');
+//引入usersever.js中的user模块命名为userserver
+var userserver = require('../server/userserver').users;
 
 
 /* GET dontdie listing. */
@@ -43,26 +45,124 @@ router.get('/cmd', function(req, res, next) {
         );
 });
 
+//新增登录验证逻辑，使用userserver.getByNumber获取到对应用户后再验证code是否匹配，匹配则登录成果并构建token，失败则登录失败
 router.post('/login',function(req, res, next) {
     const number = req.body.number;
     const code = req.body.code;
-    if (number !== '321' || code !== '123456') {
+    userserver.getByNumber(number,(err,user) =>{
+        if (err && !user) return res.send({
+                        success: false,
+                        status:999,
+                        message: '无法获取用户',
+                        data: err});
+        if (user.code !== code) {
+            return res.send({
+                success: false,
+                status:400,
+                message: '用户名或密码错误',
+                data: null
+            })
+        }
+        const token = jwt.sign({ number: number }, secretKey, { expiresIn: '1h' });
         return res.send({
-            success: false,
-            status:400,
-            message: '用户名或密码错误',
-            data: null
+            success: true,
+            status:200,
+            message: '登录成功',
+            data: {
+                number: number,
+                token: token
+            }
         })
-    }
+    });
+})
 
-    const token = jwt.sign({ number: number }, secretKey, { expiresIn: '1h' });
-    return res.send({
-        success: true,
-        status:200,
-        message: '登录成功',
-        data: {
-            number: number,
-            token: token
+//写一个post请求的'/register'路由，获取表单的number和code通过调用userserver中的方法存入数据库，如果number存在就更新code，如果number不存在就插入一条新数据
+router.post('/register',function(req, res, next) {
+    const number = req.body.number;
+    const code = req.body.code;
+    userserver.getByNumber(number, function(err, result) {
+        if (err) return res.send({
+                            success: false,
+                            status:999,
+                            message: '无法获取用户',
+                            data: err
+                        })
+        if (result) {
+            userserver.updateCode(number, code, function(err, result) {
+                if (err) return res.send({
+                             success: false,
+                             status:999,
+                             message: '用户已存在，更新失败',
+                             data: err
+                         })
+                return res.send({
+                    success: true,
+                    status:200,
+                    message: '用户已存在，更新成功',
+                    data: result
+                })
+            })
+        }else {
+            userserver.add(number, code, function(err, result) {
+                if (err) return res.send({
+                             success: false,
+                             status:999,
+                             message: '用户不存在，新增失败',
+                             data: err
+                         })
+                return res.send({
+                    success: true,
+                    status:999,
+                    message: '用户不存在，新增成功',
+                    data: result
+                })
+            })
+        }
+    })
+})
+
+//修改code，生成新的code
+router.post('/newcode',function(req, res, next) {
+    const number = req.body.number;
+    //获取1000-9999之间的一个随机数
+    const newcode = Math.floor(Math.random() * 9000 + 1000);
+    userserver.getByNumber(number, function(err, result) {
+        if (err) return res.send({
+                            success: false,
+                            status:999,
+                            message: '无法获取用户',
+                            data: err
+                        })
+        if (result) {
+            userserver.updateCode(number, newcode, function(err, result) {
+                if (err) return res.send({
+                             success: false,
+                             status:999,
+                             message: '用户已存在，更新失败',
+                             data: err
+                         })
+                return res.send({
+                    success: true,
+                    status:200,
+                    message: '用户已存在，更新成功',
+                    data: newcode
+                })
+            })
+        }else {
+            userserver.add(number, newcode, function(err, result) {
+                if (err) return res.send({
+                             success: false,
+                             status:999,
+                             message: '用户不存在，新增失败',
+                             data: err
+                         })
+                return res.send({
+                    success: true,
+                    status:999,
+                    message: '用户不存在，新增成功',
+                    data: newcode
+                })
+            })
         }
     })
 })
