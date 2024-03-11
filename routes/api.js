@@ -5,8 +5,14 @@ const { exec } = require('child_process');
 var router = express.Router();
 var jwt = require('jsonwebtoken');
 const { secretKey } = require('../config/defultconfig');
+
 //引入usersever.js中的user模块命名为userserver
 var userserver = require('../server/userserver').users;
+
+//引入multer模块
+var multer = require('multer');
+//定义multer的目录为"./tmp/"
+var uploadDest = multer({ dest: './tmp/' });
 
 
 /* GET dontdie listing. */
@@ -167,4 +173,29 @@ router.post('/newcode',function(req, res, next) {
     })
 })
 
+//新增一个接口"/upload/img/:path" 用于上传单个图片文件
+router.post('/upload/img/:path',uploadDest.single('image'), function(req, res, next) {
+    var path = req.params.path;
+    const imageName = new Date().getTime();
+    sharp(req.file.path)
+        .webp({ quality: 80 })
+        .toFile(`./public/upload/${path}/${imageName}.webp`,(err,info) => {
+            if (err) return res.send({success: false,status:999,message: '图片上传失败',data: err})
+            return res.send({success: true,status:200,message: '图片上传成功',data: `${path}/${imageName}.webp`})
+        })
+    })
+
+//新增一个接口"/upload/imgs/:path" 用于上传一组图片文件
+router.post('/upload/imgs/:path',uploadDest.array('images',9), function(req, res, next) {
+    var path = req.params.path;
+    var images = req.files;
+    images.forEach(item => {
+        var imageName = new Date().getTime();
+        sharp(item.path).webp({ quality: 80 })
+                        .toFile(`./public/upload/${path}/${imageName}.webp`,(err,info) => {
+                            if (err) return res.send({success: false,status:999,message: '图片上传失败',data: err})              
+        })
+    })
+    return res.send({success: true,status:200,message: '图片上传成功',data: images.map(item => `${path}/${imageName}.webp`)
+})
 module.exports = router;
