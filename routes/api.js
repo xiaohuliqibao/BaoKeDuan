@@ -14,6 +14,9 @@ var multer = require('multer');
 //定义multer的目录为"./tmp/"
 var uploadDest = multer({ dest: './tmp/' });
 
+//引入文件模块fs
+var fs = require('fs');
+
 
 /* GET dontdie listing. */
 router.get('/sysinfo', function(req, res, next) {
@@ -196,6 +199,18 @@ router.post('/upload/imgs/:path',uploadDest.array('images',9), function(req, res
                             if (err) return res.send({success: false,status:999,message: '图片上传失败',data: err})              
         })
     })
-    return res.send({success: true,status:200,message: '图片上传成功',data: images.map(item => `${path}/${imageName}.webp`)
+    return res.send({success: true,status:200,message: '图片上传成功',data: images.map(item => `${path}/${imageName}.webp`)})
+})
+
+//新增一个接口"/read/file" 读取指定目录下的文件内容,path路径，filename文件名称
+router.get('/read/file', function(req, res, next) {
+    var path = req.query.path;
+    var filename = req.query.filename;
+    console.log(path,filename)
+    if (!path || !filename) return res.send({success: false,status:999,message: '参数错误',data: null})
+    fs.readFile(`${path}/${filename}`, 'utf8', function(err, data) {
+        if (err) return res.send({success: false,status:999,message: '读取文件失败',data: err})
+        return res.send({success: true,status:200,message: '读取文件成功',data: data})
+    })
 })
 module.exports = router;

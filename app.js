@@ -6,23 +6,26 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var jwtAuth = require("./config/jwtconfig");
 
-//自定义的模块
+//引入自定义的路由
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const dontDieRouter = require('./routes/dontdie');
 const apiRouter = require('./routes/api');
 var app = express();
 
-// view engine setup
+// view engine setup 模板引擎，模板目录位置views，引擎类型pug
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
+//
 app.use(logger('dev'));
+app.use(cookieParser());
+//jwtAuth中间件
+app.use(jwtAuth);
+//express原生三个中间件，json(),urlencoded()协助解析请求参数的中间件，static()配置静态资源的直接访问http://localhost:3000/image.png
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(jwtAuth);
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
