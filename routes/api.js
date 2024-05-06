@@ -1,5 +1,4 @@
 var express = require('express');
-var userserver = require('../server/userserver');
 const os = require('os');
 const { exec } = require('child_process');
 var router = express.Router();
@@ -8,6 +7,9 @@ const { secretKey } = require('../config/defultconfig');
 
 //引入usersever.js中的user模块命名为userserver
 var userserver = require('../server/userserver').users;
+
+//引入fileinfoserver.js中的fileinfo模块命名为fileinfoserver
+var fileinfoserver = require('../server/fileInfoserver').fileinfo;
 
 //引入multer模块
 var multer = require('multer');
@@ -213,6 +215,12 @@ router.get('/read/file', function(req, res, next) {
         if (err) return res.send({success: false,status:999,message: '读取文件失败',data: err})
         return res.send({success: true,status:200,message: '读取文件成功',data: data})
     })
+})
+
+//新增一个接口"/test" 用于测试
+router.get('/test', function (req, res, next) {
+    fileinfoserver.addFiles('./source')
+    return res.send({success: true,status:200,message: '测试成功',data: null})
 })
 
 //新增一个接口"/sys"

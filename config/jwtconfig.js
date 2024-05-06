@@ -7,7 +7,8 @@ const params = {
 
 const unless_path = ['/api/login'
                     ,'/api/register'
-                    ,'/api/newcode']
+                    ,'/api/newcode'
+                    ,'/api/test']
 
 const jwtAuth = expressJwt.expressjwt(params).unless({path: unless_path});
 

@@ -7,33 +7,27 @@ const db = new sqlite3.Database(daname);
 
 db.serialize(function() {
     const createsql = `CREATE TABLE IF NOT EXISTS fileinfo 
-                (id INTEGER PRIMARY KEY AUTOINCREMENT, filename TEXT,fileext TEXT, filepath TEXT,filesize TEXT,filecreatetime TXET,fileuploadtime TEXT, fileuploaduser TEXT,filefullinfo TEXT)`
+                (id INTEGER PRIMARY KEY AUTOINCREMENT, filename TEXT,fileext TEXT, filepath TEXT,filesize TEXT,filecreatetime TEXT,fileuploadtime TEXT, fileuploaduser TEXT,filefullinfo TEXT)`
     db.run(createsql);
 });
 
 class fileinfo{
     
     constructor(filename,fileext,filepath,filesize,filecreatetime,fileuploaduser,fileuploadtime,filefullinfo){
-        //完成构造函数内部
-        this.filename = filename;
-        this.fileext = fileext;
-        this.filepath = filepath;
-        this.filesize = filesize;
-        this.filecreatetime = filecreatetime;
-        this.fileuploaduser = fileuploaduser;
-        this.fileuploadtime = fileuploadtime;
-        this.filefullinfo = filefullinfo;
+        // //完成构造函数内部
+        // this.filename = filename;
+        // this.fileext = fileext;
+        // this.filepath = filepath;
+        // this.filesize = filesize;
+        // this.filecreatetime = filecreatetime;
+        // this.fileuploaduser = fileuploaduser;
+        // this.fileuploadtime = fileuploadtime;
+        // this.filefullinfo = filefullinfo;
     }
 
     //获取所有文件列表
     static getAllFileInfo(rd){
-        db.all(`SELECT * FROM fileinfo`,(err,rows)=>{
-            if(err){
-                console.log(err);
-            }else{
-                rd(rows);
-            }
-        })
+        db.all(`SELECT * FROM fileinfo`,rd)
     }
     //新增一个文件
     static addFileInfo(filename,fileext,filepath,filesize,filecreatetime,fileuploaduser,fileuploadtime,filefullinfo,rd){
@@ -66,7 +60,7 @@ class fileinfo{
             }
             if(fileStat.isFile()){
                 console.log(path.resolve(filePath));
-                fileinfo.addFileInfo(path.basename(filePath),path.extname(filePath),path.resolve(filePath),fileStat.size,fileStat.ctime.toLocaleString,'qibao',new Date().toLocaleString,filePath)
+                fileinfo.addFileInfo(path.basename(filePath),path.extname(filePath),path.resolve(filePath),fileStat.size,fileStat.ctime.toLocaleDateString(),'qibao',new Date().toLocaleDateString(),filePath)
             }
         })
     }
