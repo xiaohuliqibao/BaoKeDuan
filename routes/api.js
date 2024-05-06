@@ -26,7 +26,8 @@ router.get('/sysinfo', function(req, res, next) {
           release: os.release(),
           uptime: os.uptime(),
           totalmem: os.totalmem(),
-          freemem: os.freemem()}
+          freemem: os.freemem(),
+          cupInfo: os.cpus()}
       ];
     
     // 构建响应对象
@@ -213,4 +214,6 @@ router.get('/read/file', function(req, res, next) {
         return res.send({success: true,status:200,message: '读取文件成功',data: data})
     })
 })
+
+//新增一个接口"/sys"
 module.exports = router;
