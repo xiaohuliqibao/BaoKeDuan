@@ -1,6 +1,7 @@
 var express = require('express');
 const os = require('os');
 const { exec } = require('child_process');
+const sharp  = require('sharp');
 var router = express.Router();
 var jwt = require('jsonwebtoken');
 const { secretKey } = require('../config/defultconfig');
@@ -183,6 +184,7 @@ router.post('/newcode',function(req, res, next) {
 router.post('/upload/img/:path',uploadDest.single('image'), function(req, res, next) {
     var path = req.params.path;
     const imageName = new Date().getTime();
+    console.log(path+'-'+req.file.path)
     sharp(req.file.path)
         .webp({ quality: 80 })
         .toFile(`./public/upload/${path}/${imageName}.webp`,(err,info) => {
@@ -195,14 +197,16 @@ router.post('/upload/img/:path',uploadDest.single('image'), function(req, res, n
 router.post('/upload/imgs/:path',uploadDest.array('images',9), function(req, res, next) {
     var path = req.params.path;
     var images = req.files;
+    var newimages = [];
     images.forEach(item => {
         var imageName = new Date().getTime();
         sharp(item.path).webp({ quality: 80 })
                         .toFile(`./public/upload/${path}/${imageName}.webp`,(err,info) => {
+                            newimages.push(`${path}/${imageName}.webp`)
                             if (err) return res.send({success: false,status:999,message: '图片上传失败',data: err})              
         })
     })
-    return res.send({success: true,status:200,message: '图片上传成功',data: images.map(item => `${path}/${imageName}.webp`)})
+    return res.send({success: true,status:200,message: '图片上传成功',data: newimages})
 })
 
 //新增一个接口"/read/file" 读取指定目录下的文件内容,path路径，filename文件名称
@@ -218,10 +222,11 @@ router.get('/read/file', function(req, res, next) {
 })
 
 //新增一个接口"/test" 用于测试
-router.get('/test', function (req, res, next) {
+router.get('/tests', function (req, res, next) {
     fileinfoserver.addFiles('./source')
     return res.send({success: true,status:200,message: '测试成功',data: null})
 })
 
 //新增一个接口"/sys"
 module.exports = router;
+//
