@@ -6,7 +6,7 @@ const daname = 'mysqlite'
 const db = new sqlite3.Database(daname);
 
 db.serialize(function() {
-    const createsql = `CREATE TABLE IF NOT EXISTS fileinfo 
+    const createsql = `CREATE TABLE IF NOT EXISTS file_info 
                 (id INTEGER PRIMARY KEY AUTOINCREMENT, filename TEXT,fileext TEXT, filepath TEXT,filesize TEXT,filecreatetime TEXT,fileuploadtime TEXT, fileuploaduser TEXT,filefullinfo TEXT)`
     db.run(createsql);
 });

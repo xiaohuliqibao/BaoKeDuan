@@ -11,6 +11,7 @@ const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const dontDieRouter = require('./routes/dontdie');
 const apiRouter = require('./routes/api');
+const openApiRouter = require('./routes/openapi');
 var app = express();
 
 // view engine setup 模板引擎，模板目录位置views，引擎类型pug
@@ -31,6 +32,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/dontdie', dontDieRouter);
 app.use('/api', apiRouter);
+app.use('/openapi', openApiRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
